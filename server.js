@@ -1,11 +1,11 @@
-// Import and require mysql2
+// Import
+require('dotenv').config();
 const mysql = require('mysql2');
+const inquirer = require('inquirer');
+const cTable = require('console.table');
 
 const PORT = process.env.PORT || 3001;
 
-// Express middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 
 // Connect to database
 const db = mysql.createConnection(
@@ -15,13 +15,8 @@ const db = mysql.createConnection(
     user: process.env.DB_USER,
     // MySQL password
     password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
+    database: process.env.DB_NAME,
   },
   console.log(`Connected to the employee_db database.`)
 );
 
-
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
