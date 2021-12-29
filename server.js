@@ -4,6 +4,7 @@ const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 
+
 const PORT = process.env.PORT || 3001;
 
 
@@ -67,4 +68,32 @@ const mainPrompt = () => {
                 break;
         }
     })
+}
+
+// View: 
+// department
+viewAllDepartments = () => {
+    db.query("SELECT * FROM department", (err, results) => {
+        if (err) console.error(err);
+        console.table(results);
+        mainPrompt();
+    });
+}
+
+// role
+viewAllRoles = () => {
+    db.query("SELECT * FROM role", (err, results) => {
+        if (err) console.error(err);
+        console.table(results);
+        mainPrompt();
+    });
+}
+
+// employee
+viewAllEmployees = () => {
+    db.query("SELECT * FROM employee", (err, results) => {
+        if (err) console.error(err);
+        console.table(results);
+        mainPrompt();
+    });
 }
