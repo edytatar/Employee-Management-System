@@ -70,6 +70,21 @@ const mainPrompt = () => {
         })
 }
 
+// Select:
+// department
+
+
+
+// role
+
+
+
+// employee
+
+
+
+
+
 // View: 
 // department
 viewAllDepartments = () => {
@@ -122,7 +137,49 @@ addDepartment = () => {
 }
 
 // role
+addRole = () => {
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                message: "What is the name of the role?",
+                name: "role_title"
+            },
+            {
+                type: "input",
+                message: "What is the salary for the role?",
+                name: "role_salary"
+            },
+            {
+                type: "list",
+                name: "role_department",
+                message: "What department does the role belong to?",
+                choices: selectDepartments()
+            },
 
+
+        ])
+
+        .then(data => {
+            // Select id from chosen department
+            db.query("SELECT id FROM department WHERE name = ?", data.role_department, (err, results) => {
+                if (err) console.error(err);
+
+                const [{ id }] = results;
+
+                const roleInfo = [data.role_name, data.role_salary, id];
+
+                db.query("INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)", roleInfo, (err, results) => {
+                    if (err) console.error(err);
+
+                    viewAllRoles();
+                    console.log(`Added ${data.role_name} to the database.`)
+                });
+
+            });
+
+        });
+}
 
 
 // employee
