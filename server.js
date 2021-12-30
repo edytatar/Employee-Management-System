@@ -10,15 +10,15 @@ const PORT = process.env.PORT || 3001;
 
 // Connect to database
 const db = mysql.createConnection(
-  {
-    host: 'localhost',
-    // MySQL username,
-    user: process.env.DB_USER,
-    // MySQL password
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-  },
-  console.log(`Connected to the employee_db database.`)
+    {
+        host: 'localhost',
+        // MySQL username,
+        user: process.env.DB_USER,
+        // MySQL password
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+    },
+    console.log(`Connected to the employee_db database.`)
 );
 
 
@@ -33,41 +33,41 @@ const mainPrompt = () => {
     return inquirer.prompt([
         {
             type: 'list',
-                name: 'options',
-                message: "What would you like to do?",
-                choices: ["View all departments", "View all roles", "View all employees", "Add a department", "Add a role", "Add an employee", "Update an employee", "Quit"],
-                loop: false,
+            name: 'options',
+            message: "What would you like to do?",
+            choices: ["View all departments", "View all roles", "View all employees", "Add a department", "Add a role", "Add an employee", "Update an employee", "Quit"],
+            loop: false,
         },
-       
+
     ])
-    .then(data => {
-        switch (data.options) {
-            case "View all departments":
-                viewAllDepartments();
-                break;
-            case "View all roles":
-                viewAllRoles();
-                break;
-            case "View all employees":
-                viewAllEmployees();
-                break;
-            case "Add a department":
-                addDepartment();
-                break;
-            case "Add a role":
-                addRole();
-                break;
-            case "Add an employee":
-                addEmployee();
-                break;
-            case "Update an employee":
-                updateEmployee();
-                break;
-            case "Quit":
-                db.end()
-                break;
-        }
-    })
+        .then(data => {
+            switch (data.options) {
+                case "View all departments":
+                    viewAllDepartments();
+                    break;
+                case "View all roles":
+                    viewAllRoles();
+                    break;
+                case "View all employees":
+                    viewAllEmployees();
+                    break;
+                case "Add a department":
+                    addDepartment();
+                    break;
+                case "Add a role":
+                    addRole();
+                    break;
+                case "Add an employee":
+                    addEmployee();
+                    break;
+                case "Update an employee":
+                    updateEmployee();
+                    break;
+                case "Quit":
+                    db.end()
+                    break;
+            }
+        })
 }
 
 // View: 
@@ -97,3 +97,32 @@ viewAllEmployees = () => {
         mainPrompt();
     });
 }
+
+// Add:
+// department
+addDepartment = () => {
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                message: "What is the name of the department?",
+                name: "department_name"
+            },
+        ])
+        .then(data => {
+            const newDept = data.department_name;
+
+            db.query("INSERT INTO department (name) VALUES (?)", newDept, (err, results) => {
+                if (err) console.error(err);
+
+                showAllDepartments();
+                console.log(`Added ${newDept} to the database.`)
+            });
+        });
+}
+
+// role
+
+
+
+// employee
