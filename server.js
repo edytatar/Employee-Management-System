@@ -87,7 +87,19 @@ selectDepartments = () => {
 }
 
 // role
+let roleNameList = [];
+selectRoles = () => {
+    db.query("SELECT title FROM role", function (err, results) {
+        if (err) console.error(err);
 
+        results.forEach(function (title) {
+            roleNameList.push(title)
+        })
+
+        roleNameList.push(new inquirer.Separator());
+    })
+    return roleNameList;
+}
 
 
 // employee
