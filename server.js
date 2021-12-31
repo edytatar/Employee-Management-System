@@ -229,12 +229,12 @@ addEmployee = () => {
 
         .then(data => {
             // Select id from chosen department
-            db.query("SELECT role_id FROM role WHERE name = ?", data.employee_role, (err, results) => {
+            db.query("SELECT id FROM role WHERE title = ?", data.employee_role, (err, results) => {
                 if (err) console.error(err);
 
                 const [{ roleId }] = results;
 
-                db.query("SELECT manager_id FROM employee WHERE name = ?", data.employee_manager, (err, resultsTwo) => {
+                db.query("SELECT manager_id FROM employee WHERE id = ?", data.employee_manager, (err, resultsTwo) => {
                     if (err) console.error(err);
 
                     const [{ managerId }] = resultsTwo;
