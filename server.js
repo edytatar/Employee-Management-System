@@ -73,7 +73,7 @@ const mainPrompt = () => {
 // Select:
 // department
 let departmentNameList = [];
-selectDepartments = () => {
+selectDepartment = () => {
     db.query("SELECT name FROM department", function (err, results) {
         if (err) console.error(err);
 
@@ -88,7 +88,7 @@ selectDepartments = () => {
 
 // role
 let roleNameList = [];
-selectRoles = () => {
+selectRole = () => {
     db.query("SELECT title FROM role", function (err, results) {
         if (err) console.error(err);
 
@@ -181,7 +181,7 @@ addRole = () => {
                 type: "list",
                 name: "role_department",
                 message: "What department does the role belong to?",
-                choices: selectDepartments()
+                choices: selectDepartment()
             },
 
 
@@ -227,7 +227,7 @@ addEmployee = () => {
                 type: "list",
                 name: "employee_role",
                 message: "What is the employee's role?",
-                choices: selectRoles()
+                choices: selectRole()
             },
             {
                 type: "list",
