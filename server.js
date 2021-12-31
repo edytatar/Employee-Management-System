@@ -72,8 +72,33 @@ const mainPrompt = () => {
 
 // Select:
 // department
+let departmentNameList = [];
+selectDepartments = () => {
+    db.query("SELECT name FROM department", function (err, results) {
+        if (err) console.error(err);
+
+        results.forEach(function(name){
+            departmentNameList.push(name)
+        })
+
+        departmentNameList.push(new inquirer.Separator());
+    })
+    return departmentNameList;
+}
 
 
+const items = ['item1', 'item2', 'item3']
+const copyItems = []
+
+// before
+for (let i = 0; i < items.length; i++) {
+  copyItems.push(items[i])
+}
+
+// after
+items.forEach(function(item){
+  copyItems.push(item)
+})
 
 // role
 
@@ -112,6 +137,8 @@ viewAllEmployees = () => {
         mainPrompt();
     });
 }
+
+
 
 // Add:
 // department
@@ -167,9 +194,9 @@ addRole = () => {
 
                 const [{ id }] = results;
 
-                const roleInfo = [data.role_name, data.role_salary, id];
+                const roleInfo = [data.role_title, data.role_salary, id];
 
-                db.query("INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)", roleInfo, (err, results) => {
+                db.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", roleInfo, (err, results) => {
                     if (err) console.error(err);
 
                     viewAllRoles();
@@ -183,3 +210,4 @@ addRole = () => {
 
 
 // employee
+    // inquirer prompts: first name, last name, select role and select manager
