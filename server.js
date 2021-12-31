@@ -103,7 +103,25 @@ selectRole = () => {
 
 
 // employee
+let employeeNameList = [];
+selectEmployee = () => {
+    db.query("SELECT first_name FROM employee", function (err, results) {
+        if (err) console.error(err);
 
+        db.query("SELECT last_name FROM employee", function (err, resultsTwo) {
+            if (err) console.error(err);
+
+            fullName = results.join(resultsTwo);
+
+            fullName.forEach(function (name) {
+                employeeNameList.push(name)
+            });
+
+            employeeNameList.push(new inquirer.Separator());
+        });
+    });
+    return employeeNameList;
+}
 
 
 
