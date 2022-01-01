@@ -70,8 +70,6 @@ const mainPrompt = () => {
         })
 }
 
-module.exports = { mainPrompt };
-
 // Select:
 // department
 let departmentNameList = [];
@@ -225,9 +223,9 @@ addRole = () => {
             db.query("SELECT id FROM department WHERE name = ?", data.role_department, (err, results) => {
                 if (err) console.error(err);
 
-                const [{ departmentid }] = results;
+                const [{ id }] = results;
 
-                const roleInfo = [data.role_title, data.role_salary, departmentid];
+                const roleInfo = [data.role_title, data.role_salary, id];
 
                 db.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", roleInfo, (err, results) => {
                     if (err) console.error(err);
@@ -338,30 +336,30 @@ updateEmployee = () => {
             },
         ])
         .then(data => {
-            db.query("SELECT id FROM role WHERE title = ?", data.employee_new_role, (err, results) => {
-                if (err) console.error(err);
-
-                const [{ id }] = results;
-
-                const updateEmployee = [];
-                updateEmployee.push(id)
-
-                const employee = data.employee_name.split(' ');
-
-                db.query("SELECT id FROM employee WHERE first_name = ? and last_name = ?", employee, (err, results) => {
+                db.query("SELECT id FROM role WHERE title = ?", data.employee_new_role, (err, results) => {
                     if (err) console.error(err);
 
                     const [{ id }] = results;
 
+                    const updateEmployee = [];
                     updateEmployee.push(id)
 
-                    db.query("UPDATE employee SET role_id = ? WHERE id = ?", updateEmployee, (err, results) => {
+                    const employee = data.employee_name.split(' ');
+
+                    db.query("SELECT id FROM employee WHERE first_name = ? and last_name = ?", employee, (err, results) => {
                         if (err) console.error(err);
 
-                        viewAllEmployees();
-                        console.log(`Updated ${data.employee_name} to ${data.employee_new_role} in the database.`)
+                        const [{ id }] = results;
+
+                        updateEmployee.push(id)
+
+                        db.query("UPDATE employee SET role_id = ? WHERE id = ?", updateEmployee, (err, results) => {
+                            if (err) console.error(err);
+
+                            viewAllEmployees();
+                            console.log(`Updated ${data.employee_name} to ${data.employee_new_role} in the database.`)
+                        });
                     });
                 });
-            });
         });
 }
