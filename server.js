@@ -247,36 +247,65 @@ addEmployee = () => {
             {
                 type: "input",
                 message: "What is the employee's first name?",
-                name: "employee_first_name"
+                name: "first_name"
             },
             {
                 type: "input",
-                message: "What is the employee's last name??",
-                name: "employee_last_name"
+                message: "What is the employee's last name?",
+                name: "last_name"
             },
             {
-                type: "input",
-                message: "What is the role id?",
-                name: "employee_role"
+                type: "list",
+                message: "What is the employee's role?",
+                name: "employee_role",
+                choices: selectRole()
             },
             {
-                type: "input",
-                message: "What is the manager's id?",
-                name: "employee_manager"
+                type: "list",
+                message: "Who is the employee's manager?",
+                name: "employee_manager",
+                choices: selectManager()
             },
-
 
         ])
-
         .then(data => {
-
-            const newEmployeeInfo = [data.employee_first_name, data.employee_last_name, data.employee_role, data.employee_manager]
-
-            db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", newEmployeeInfo, (err, results) => {
+            db.query("SELECT id FROM role WHERE title = ?", data.employee_role, (err, results) => {
                 if (err) console.error(err);
 
-                viewAllEmployees();
-                console.log(`Added ${data.employee_first_name} ${data.employee_last_name} to the database.`)
+                const [{ id }] = results;
+
+                const newEmployeeInfo = [data.first_name, data.last_name];
+                newEmployeeInfo.push(id)
+
+                if (data.employee_manager === "None") {
+                    let noManager = null
+
+                    newEmployeeInfo.push(noManager)
+
+                    db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", newEmployeeInfo, (err, results) => {
+                        if (err) console.error(err);
+
+                        ViewAllEmployees();
+                        console.log(`Added ${data.first_name} ${data.last_name} to the database.`)
+                    });
+                } else {
+                    const manager = data.employee_manager.split(' ')
+
+                    db.query("SELECT id FROM employee WHERE first_name = ? and last_name = ?", manager, (err, results) => {
+                        if (err) console.error(err);
+
+                        const [{ id }] = results;
+
+                        newEmployeeInfo.push(id)
+
+                        db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", newEmployeeInfo, (err, results) => {
+                            if (err) console.error(err);
+
+                            viewAllEmployees();
+                            console.log(`Added ${data.first_name} ${data.last_name} to the database.`)
+                        });
+                    });
+                }
             });
 
         });
