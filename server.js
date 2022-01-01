@@ -77,9 +77,7 @@ selectDepartment = () => {
     db.query("SELECT name FROM department", function (err, results) {
         if (err) console.error(err);
 
-        results.forEach(function (name) {
-            departmentNameList.push(name)
-        })
+        results.forEach(name => departmentNameList.push(name));
 
         departmentNameList.push(new inquirer.Separator());
     })
@@ -88,39 +86,51 @@ selectDepartment = () => {
 
 // role
 let roleNameList = [];
-selectRole = () => {
+function selectRole() {
     db.query("SELECT title FROM role", function (err, results) {
         if (err) console.error(err);
 
-        results.forEach(function (title) {
-            roleNameList.push(title)
-        })
+        for (var i = 0; i < results.length; i++) {
+            roleNameList.push(results[i].title);
+        }
 
         roleNameList.push(new inquirer.Separator());
     })
     return roleNameList;
-}
 
+}
 
 // employee
 let employeeNameList = [];
 selectEmployee = () => {
-    db.query("SELECT first_name FROM employee", function (err, results) {
+    db.query("SELECT first_name, last_name FROM employee", function (err, results) {
         if (err) console.error(err);
 
-        db.query("SELECT last_name FROM employee", function (err, resultsTwo) {
-            if (err) console.error(err);
+        for (var i = 0; i < results.length; i++) {
+            employeeNameList.push(results[i].first_name + " " + results[i].last_name);
+        }
 
-            fullName = results.join(resultsTwo);
-
-            fullName.forEach(function (name) {
-                employeeNameList.push(name)
-            });
-
-            employeeNameList.push(new inquirer.Separator());
-        });
-    });
+        employeeNameList.push(new inquirer.Separator());
+    })
     return employeeNameList;
+}
+
+
+// Manager
+let managerNameList = [];
+selectManager = () => {
+    db.query("SELECT first_name, last_name FROM employee", function (err, results) {
+        if (err) console.error(err);
+
+        managerNameList.push("None");
+
+        for (var i = 0; i < results.length; i++) {
+            managerNameList.push(results[i].first_name + " " + results[i].last_name);
+        }
+
+        managerNameList.push(new inquirer.Separator());
+    })
+    return managerNameList;
 }
 
 
@@ -131,6 +141,7 @@ selectEmployee = () => {
 viewAllDepartments = () => {
     db.query("SELECT * FROM department", (err, results) => {
         if (err) console.error(err);
+
         console.table(results);
         mainPrompt();
     });
@@ -141,6 +152,7 @@ viewAllDepartments = () => {
 viewAllRoles = () => {
     db.query("SELECT * FROM role", (err, results) => {
         if (err) console.error(err);
+
         console.table(results);
         mainPrompt();
     });
@@ -150,6 +162,7 @@ viewAllRoles = () => {
 viewAllEmployees = () => {
     db.query("SELECT * FROM employee", (err, results) => {
         if (err) console.error(err);
+
         console.table(results);
         mainPrompt();
     });
@@ -210,9 +223,9 @@ addRole = () => {
             db.query("SELECT id FROM department WHERE name = ?", data.role_department, (err, results) => {
                 if (err) console.error(err);
 
-                const [{ id }] = results;
+                const [{ departmentid }] = results;
 
-                const roleInfo = [data.role_title, data.role_salary, id];
+                const roleInfo = [data.role_title, data.role_salary, departmentid];
 
                 db.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", roleInfo, (err, results) => {
                     if (err) console.error(err);
@@ -242,45 +255,31 @@ addEmployee = () => {
                 name: "employee_last_name"
             },
             {
-                type: "list",
-                name: "employee_role",
-                message: "What is the employee's role?",
-                choices: selectRole()
+                type: "input",
+                message: "What is the role id?",
+                name: "employee_role"
             },
             {
-                type: "list",
-                name: "employee_manager",
-                message: "Who is the employee's manager?",
-                choices: selectEmployee()
+                type: "input",
+                message: "What is the manager's id?",
+                name: "employee_manager"
             },
 
 
         ])
 
         .then(data => {
-            // Select id from chosen department
-            db.query("SELECT id FROM role WHERE title = ?", data.employee_role, (err, results) => {
+
+            const newEmployeeInfo = [data.employee_first_name, data.employee_last_name, data.employee_role, data.employee_manager]
+
+            db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", newEmployeeInfo, (err, results) => {
                 if (err) console.error(err);
 
-                const [{ roleId }] = results;
-
-                db.query("SELECT manager_id FROM employee WHERE id = ?", data.employee_manager, (err, resultsTwo) => {
-                    if (err) console.error(err);
-
-                    const [{ managerId }] = resultsTwo;
-
-
-                    const employeeInfo = [data.employee_first_name, data.employee_last_name, roleId, managerId];
-
-                    db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?)", employeeInfo, (err, results) => {
-                        if (err) console.error(err);
-
-                        viewAllEmployees();
-                        console.log(`Added ${data.employee_first_name} ${data.employee_last_name} to the database.`)
-                    });
-                });
-
+                viewAllEmployees();
+                console.log(`Added ${data.employee_first_name} ${data.employee_last_name} to the database.`)
             });
 
         });
 }
+
+
