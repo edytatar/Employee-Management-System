@@ -45,32 +45,32 @@ INSERT INTO employee (first_name, last_name, role_id, manager_id)
 
 UPDATE employee 
 SET 
-    manager_id = 20
+    manager_id = 2
 WHERE
     first_name = "Edyta";
 
 UPDATE employee 
 SET 
-    manager_id = 22
+    manager_id = 4
 WHERE
     first_name = "Elijah";
 
 UPDATE employee 
 SET 
-    manager_id = 24
+    manager_id = 6
 WHERE
     first_name = "Nathaniel";
     
 UPDATE employee 
 SET 
-    manager_id = 25
+    manager_id = 7
 WHERE
     first_name = "Maria";
 
     
 UPDATE employee 
 SET 
-    manager_id = 26
+    manager_id = 8
 WHERE
     first_name = "Daniel";
 
