@@ -70,6 +70,8 @@ const mainPrompt = () => {
         })
 }
 
+module.exports = { mainPrompt };
+
 // Select:
 // department
 let departmentNameList = [];
@@ -311,4 +313,55 @@ addEmployee = () => {
         });
 }
 
+// Update:
+// employee
+updateEmployee = () => {
+    inquirer
+        .prompt([
+            {
+                type: "list",
+                message: "What would you like to update?",
+                name: "update",
+                choices: ["Employee's role"]
+            },
+            {
+                type: "list",
+                message: "Whose role would you like to update?",
+                name: "employee_name",
+                choices: selectEmployee()
+            },
+            {
+                type: "list",
+                message: "Which role do you want to assign the selected employee?",
+                name: "employee_new_role",
+                choices: selectRole()
+            },
+        ])
+        .then(data => {
+            db.query("SELECT id FROM role WHERE title = ?", data.employee_new_role, (err, results) => {
+                if (err) console.error(err);
 
+                const [{ id }] = results;
+
+                const updateEmployee = [];
+                updateEmployee.push(id)
+
+                const employee = data.employee_name.split(' ');
+
+                db.query("SELECT id FROM employee WHERE first_name = ? and last_name = ?", employee, (err, results) => {
+                    if (err) console.error(err);
+
+                    const [{ id }] = results;
+
+                    updateEmployee.push(id)
+
+                    db.query("UPDATE employee SET role_id = ? WHERE id = ?", updateEmployee, (err, results) => {
+                        if (err) console.error(err);
+
+                        viewAllEmployees();
+                        console.log(`Updated ${data.employee_name} to ${data.employee_new_role} in the database.`)
+                    });
+                });
+            });
+        });
+}
