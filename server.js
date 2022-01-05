@@ -285,7 +285,7 @@ addEmployee = () => {
                     db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", newEmployeeInfo, (err, results) => {
                         if (err) console.error(err);
 
-                        ViewAllEmployees();
+                        viewAllEmployees();
                         console.log(`Added ${data.first_name} ${data.last_name} to the database.`)
                     });
                 } else {
